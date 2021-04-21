@@ -47,6 +47,20 @@ router.get('/:id', async (req,res) =>{
 	res.send(data)
 })
 // POST /hamsters
+router.post('/', async (req, res) => {
+
+	//express.json måste vara installerat
+	const object = req.body
+
+	if( !object || !object.name || !object.age ) {
+		res.sendStatus(400)
+		return
+	}
+
+	const docRef = await db.collection('hamsters').add(object)
+	res.send(docRef.id)
+})
+
 // PUT /hamsters/:id
 // DELETE /hamsters/:id
 
