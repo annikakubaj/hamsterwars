@@ -52,7 +52,7 @@ router.post('/', async (req, res) => {
 	//express.json måste vara installerat
 	const object = req.body
 
-	if( !object || !object.name || !object.age ) {
+	if( !isHamsterObject(object) ) {
 		res.sendStatus(400)
 		return
 	}
@@ -62,6 +62,27 @@ router.post('/', async (req, res) => {
 })
 
 // PUT /hamsters/:id
+router.put('/:id', async (req, res) => {
+	const object = req.body
+	const id = req.params.id
+
+	if( !object ||!id ) {
+		res.sendStatus(400)
+		return
+	}
+
+	const docRef =db.collection('hamsters').doc(id)
+
+	await db.collection('hamsters').doc(id).set(object, {merge: true })
+	res.sendStatus(200)
+})
+
+function isHamsterObject(maybeObject) {
+	if( !maybeObject || !maybeObject.name || !maybeObject.age )
+	return false
+
+	return true
+}
 // DELETE /hamsters/:id
 
 
