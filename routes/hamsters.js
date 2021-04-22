@@ -114,6 +114,19 @@ function isHamsterObject(maybeObject) {
 	return true
 }
 // DELETE /hamsters/:id
+router.delete('/:id', async (req, res) => {
+	const id = req.params.id
+
+	
+	if ( !id ) {
+		res.sendStatus(400)
+		return
+	}
+
+	await db.collection('hamsters').doc(id).delete()
+	res.sendStatus(200)
+
+})
 
 
 
