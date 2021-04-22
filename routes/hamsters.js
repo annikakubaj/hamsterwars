@@ -32,6 +32,28 @@ res.send(items)
 
 })
 
+// GET RANDOM
+router.get('/random', async (req, res) => {
+
+	const hamstersRef = db.collection('hamsters');
+	const snapshot = await hamstersRef.get();
+	if (snapshot.empty) {
+		res.send([])
+		return
+	}
+       items = []
+
+	snapshot.forEach(doc => {
+		const data = doc.data()
+		data.id = doc.id 
+		items.push(data)
+	})
+
+	const randomIndex = Math.floor(Math.random() * items.length)
+	res.status(200).send(items[randomIndex])
+
+})
+
 // GET /hamsters/:id
 
 router.get('/:id', async (req,res) =>{
@@ -40,12 +62,18 @@ router.get('/:id', async (req,res) =>{
 
 	if( !docRef.exists ) {
 		res.status(404).send('Hamster does not exist')
+		return
 
 	}
 
 	const data = docRef.data()
 	res.send(data)
-})
+});
+
+
+
+
+
 // POST /hamsters
 router.post('/', async (req, res) => {
 
@@ -71,6 +99,8 @@ router.put('/:id', async (req, res) => {
 		return
 	}
 
+	//Todo, kontrollera att objektet finns i databasen
+
 	const docRef =db.collection('hamsters').doc(id)
 
 	await db.collection('hamsters').doc(id).set(object, {merge: true })
@@ -78,7 +108,7 @@ router.put('/:id', async (req, res) => {
 })
 
 function isHamsterObject(maybeObject) {
-	if( !maybeObject || !maybeObject.name || !maybeObject.age )
+	if( !maybeObject ) 
 	return false
 
 	return true
