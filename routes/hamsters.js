@@ -74,20 +74,30 @@ router.get('/:id', async (req,res) =>{
 
 
 
-// POST /hamsters
+//POST /hamsters
 router.post('/', async (req, res) => {
+	console.log('nr1')
 
 	//express.json måste vara installerat
 	const object = req.body
 
+	console.log('nr2', object)
+
 	if( !isHamsterObject(object) ) {
 		res.sendStatus(400)
+		console.log('nr2.5')
 		return
 	}
+	console.log('nr3')
 
 	const docRef = await db.collection('hamsters').add(object)
-	res.send(docRef.id)
+	const idObj = { id: docRef.id }
+	res.send(idObj)
+	
 })
+
+
+
 
 // PUT /hamsters/:id
 router.put('/:id', async (req, res) => {
@@ -113,21 +123,30 @@ function isHamsterObject(maybeObject) {
 
 	return true
 }
-// DELETE /hamsters/:id
+ //DELETE /hamsters/:id
 router.delete('/:id', async (req, res) => {
-	const id = req.params.id
+	const id = req.params.id;
 
-	
-	if ( !id ) {
-		res.sendStatus(400)
-		return
+	if( !id ) {
+		res.sendStatus(400);
+		return;
 	}
 
-	await db.collection('hamsters').doc(id).delete()
-	res.sendStatus(200)
+	const docRef = db.collection('hamsters').doc(id);
+	const machingId = await docRef.get();
 
-})
+	if( !machingId.exists ) {
+	
+		res.sendStatus(404);
+		return;
+	}
+	
+	await docRef.delete();
+	res.sendStatus(200);
+});
 
+
+  
 
 
 module.exports = router

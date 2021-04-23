@@ -6,7 +6,7 @@ const hamsters = require('./routes/hamsters.js')
 
 
 const PORT = 1337
-//const staticFolder = path.join(__dirname, 'public')
+const staticFolder = path.join(__dirname, 'static')
 
 //Middleware
 //logger som skriver ut info om varje request i terminalen
@@ -17,7 +17,7 @@ app.use((req, res, next) => {
 
 app.use( express.json() )
 app.use( cors() )
-//app.use( express.static(staticFolder) )
+app.use( express.static(staticFolder) )
 
 //Routes
 app.get('/', (req, res) => {
