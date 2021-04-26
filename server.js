@@ -4,8 +4,8 @@ const cors = require('cors')
 const path = require('path')
 const hamsters = require('./routes/hamsters.js')
 
-
-const PORT = 1337
+// Heroku uses process.env.PORT
+const PORT = process.env.PORT || 1337
 const staticFolder = path.join(__dirname, 'static')
 
 //Middleware
