@@ -104,8 +104,7 @@ function isHamsterObject(maybeObject) {
 
 //PUT /hamsters/:id
 router.put('/:id', async (req, res) => {
-
-const id = req.params.id;
+	const id = req.params.id;
 	const object = req.body;
 	
 
@@ -119,29 +118,36 @@ const id = req.params.id;
 
 	try {
 		hamsterRef = await docRef.get();
-		
 	}
 
 	catch(error) {
+		console.log(error.message);
 		res.status(500).send(error.message);
 		return;
 	}
 
 	if(!hamsterRef.exists) {
-		res.status(404).send("Whops! Hamster not found.");
+		res.status(404).send('Whops! Hamster not found.');
 		return;
 	}
 
 	try {
 		await docRef.set(object, { merge: true });
+
+		if(Object.keys(object).length === 0) {
+			res.sendStatus(400);
+			return;
+		}
+
 		res.sendStatus(200);
 	}
 
 	catch(error) {
+		console.log(error.message);
 		res.status(500).send(error.message);
 	}
-})
 
+});
 
  //DELETE /hamsters/:id
 router.delete('/:id', async (req, res) => {
