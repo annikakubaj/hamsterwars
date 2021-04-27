@@ -82,4 +82,42 @@ router.post('/', async (req, res) => {
 	
 })
  
+//DELETE /matches/:id
+router.delete('/:id', async (req, res) => {
+
+	const id = req.params.id;
+	
+		if(!id) {
+			res.sendStatus(400);
+			return;
+		}
+	
+		let docRef;
+	
+		try {
+			docRef = await db.collection('matches').doc(id).get();
+		}
+	
+		catch(error) {
+			res.status(500).send(error.message);
+			return;
+		}
+	
+		if(!docRef.exists) {
+			// res.status(404).send(Whops! Match not found.);
+			res.sendStatus(404);
+			return;
+		}
+	
+		try {
+			await db.collection('matches').doc(id).delete()
+			res.sendStatus(200);
+		}
+	
+		catch(error) {
+			res.status(500).send(error.message);
+		} 
+	});
+
+
 module.exports = router
