@@ -32,5 +32,26 @@ router.get('/', async (req, res) => {
     
     
     })
+
+	// GET /matches/:id
+
+router.get('/:id', async (req,res) =>{
+
+	try {
+	const id = req.params.id
+	const docRef = await db.collection('matches').doc(id).get()
+
+	if( !docRef.exists ) {
+		res.status(404).send(`Matches with id: ${id} does not exist`)
+		return
+
+	}
+
+	const data = docRef.data()
+	res.send(data)
+} catch (err) {
+	res.status(500).send(err.message)
+}
+});
  
 module.exports = router
