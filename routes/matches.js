@@ -53,5 +53,33 @@ router.get('/:id', async (req,res) =>{
 	res.status(500).send(err.message)
 }
 });
+
+//POST /matches
+router.post('/', async (req, res) => {
+	
+	try {
+	//express.json måste vara installerat
+	const object = req.body
+
+	
+
+	// if( !isHamsterObject(object) ) {
+	// 	res.sendStatus(400)
+	// 	return
+	// }
+
+	if(!object.winnerId ||!object.loserId) {
+        res.sendStatus(400)
+        return
+    }
+
+	const docRef = await db.collection('matches').add(object)
+	const idObj = { id: docRef.id }
+	res.send(idObj)
+	} catch (err) {
+		res.status(500).send(err.message)
+	}
+	
+})
  
 module.exports = router
