@@ -30,26 +30,4 @@ catch(err) {
 }
 })
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 module.exports = router

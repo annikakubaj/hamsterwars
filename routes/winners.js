@@ -6,20 +6,21 @@ const router = express.Router()
 
 
 // GET /winners
+
 router.get('/', async (req, res) => {
-	let result; 
+	let snapshot; 
 
 	try {
-		result = await db.collection('hamsters').orderBy('wins', 'desc').limit(5).get();
+		snapshot = await db.collection('hamsters').orderBy('wins', 'desc').limit(5).get();
 		
 		const topFive = [];
 
-		result.forEach(doc => {
+		snapshot.forEach(doc => {
 			topFive.push(doc.data());
 		});
 
 		res.send(topFive);
-		// res.status(200).send(result)
+		
 	}
 
 	catch(err) {

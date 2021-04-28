@@ -95,13 +95,6 @@ router.post('/', async (req, res) => {
 	//express.json måste vara installerat
 	const object = req.body
 
-	
-
-	// if( !isHamsterObject(object) ) {
-	// 	res.sendStatus(400)
-	// 	return
-	// }
-
 	if(!object.name || typeof object.age != 'number' || !object.favFood || !object.loves || !object.imgName || typeof object.wins != 'number' || typeof object.defeats != 'number' || typeof object.games != 'number') {
         res.sendStatus(400)
         return
@@ -116,12 +109,6 @@ router.post('/', async (req, res) => {
 	
 })
 
-// function isHamsterObject(maybeObject) {
-// 	if( !maybeObject ) 
-// 	return false
-
-// 	return true
-// }
 
 
 //PUT /hamsters/:id
