@@ -1,12 +1,10 @@
 const getDatabase = require('../database.js')
 const db = getDatabase()
- 
 const express = require('express')
 const router = express.Router()
 
 
 // GET /winners
-
 router.get('/', async (req, res) => {
 	let snapshot; 
 

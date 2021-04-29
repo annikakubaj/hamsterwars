@@ -1,10 +1,9 @@
 const getDatabase = require('../database.js')
 const db = getDatabase()
- 
 const express = require('express')
 const router = express.Router()
 
-// GET losers
+// GET /losers
 router.get('/', async (req, res) => {
 
     try {
@@ -13,12 +12,12 @@ router.get('/', async (req, res) => {
 	const snapshot = await hamsterRef.orderBy('defeats', 'desc').limit(5).get();
     
  
-    const lowFive = [];
+    const topFiveLosers = [];
     snapshot.forEach(doc => {
-    lowFive.push(doc.data());
+    topFiveLosers.push(doc.data());
     });
      
-    res.send(lowFive);
+    res.send(topFiveLosers);
     }
     
     catch(err) {

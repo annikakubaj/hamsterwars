@@ -1,40 +1,37 @@
 const getDatabase = require('../database.js')
 const db = getDatabase()
- 
 const express = require('express')
 const router = express.Router()
  
 // GET /matches
 router.get('/', async (req, res) => {
-    //  console.log('/hamster REST API');
-    //  res.send('/hamsters REST API') 
+     
     try {
     const matchesRef = db.collection('matches')
     const snapshot = await matchesRef.get()
     
     if ( snapshot.empty) {
-        // res.send([])
         res.status(404).send("Could not find any matches.")
         return
     }
     
-    let items = []
+    let matchItems = []
     snapshot.forEach(doc => {
         const data = doc.data()
         data.id = doc.id // id behövs för POST + PUT + DELETE
-        items.push( data )
+        matchItems.push( data )
     
     })
-    res.send(items)
+
+    res.send(matchItems)
     } catch (err) {
         res.status(500).send(err.message)
     }
     
-    
-    })
+})
+
 
 	// GET /matches/:id
-
 router.get('/:id', async (req,res) =>{
 
 	try {
@@ -49,24 +46,16 @@ router.get('/:id', async (req,res) =>{
 
 	const data = docRef.data()
 	res.send(data)
-} catch (err) {
+	} catch (err) {
 	res.status(500).send(err.message)
-}
+	}
 });
 
 //POST /matches
 router.post('/', async (req, res) => {
 	
 	try {
-	//express.json måste vara installerat
 	const object = req.body
-
-	
-
-	// if( !isHamsterObject(object) ) {
-	// 	res.sendStatus(400)
-	// 	return
-	// }
 
 	if(!object.winnerId ||!object.loserId) {
         res.sendStatus(400)
@@ -84,7 +73,7 @@ router.post('/', async (req, res) => {
  
 //DELETE /matches/:id
 router.delete('/:id', async (req, res) => {
-
+	try {
 	const id = req.params.id;
 	
 		if(!id) {
@@ -94,30 +83,24 @@ router.delete('/:id', async (req, res) => {
 	
 		let docRef;
 	
-		try {
-			docRef = await db.collection('matches').doc(id).get();
-		}
 	
-		catch(error) {
-			res.status(500).send(error.message);
-			return;
-		}
+			docRef = await db.collection('matches').doc(id).get();
+		
 	
 		if(!docRef.exists) {
-			// res.status(404).send(Whops! Match not found.);
-			res.sendStatus(404);
+			res.status(404).send(`Matches with id: ${id} does not exist`)
 			return;
 		}
 	
-		try {
+		
 			await db.collection('matches').doc(id).delete()
 			res.sendStatus(200);
+		
 		}
-	
 		catch(error) {
 			res.status(500).send(error.message);
 		} 
-	});
+});
 
 
 module.exports = router

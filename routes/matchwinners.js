@@ -1,9 +1,9 @@
 const getDatabase = require('../database.js')
 const db = getDatabase()
- 
 const express = require('express')
 const router = express.Router()
 
+//GET matchwinners /:id
 router.get('/:id', async (req, res) => {
 try {
 

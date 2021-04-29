@@ -1,36 +1,31 @@
 const getDatabase = require('../database.js')
 const db = getDatabase()
-
 const express = require('express')
 const router = express.Router()
 
 
-
-
-// REST API 
-
 // GET /hamsters
 router.get('/', async (req, res) => {
-//	console.log('/hamster REST API');
-//	res.send('/hamsters REST API') 
-	try {
-const hamstersRef = db.collection('hamsters')
-const snapshot = await hamstersRef.get()
 
-if ( snapshot.empty) {
+	try {
+	const hamstersRef = db.collection('hamsters')
+	const snapshot = await hamstersRef.get()
+
+	if ( snapshot.empty) {
 	// res.send([])      eller är detta mer korrekt? 
 	res.status(404).send("Could not find any hamsters")
 	return
 }
 
-let items = []
+
+let hamsterItems = []
 snapshot.forEach(doc => {
 	const data = doc.data()
 	data.id = doc.id // id behövs för POST + PUT + DELETE
-	items.push( data )
+	hamsterItems.push( data )
 
 })
-res.send(items)
+res.send(hamsterItems)
 	} catch (err) {
 		res.status(500).send(err.message)
 	}
@@ -44,27 +39,25 @@ router.get('/random', async (req, res) => {
 	const snapshot = await hamstersRef.get();
 
 	if (snapshot.empty) {
-		// res.send([])
 		res.status(404).send("Could not find any hamsters")
 		return
 	}
-       items = []
+	hamsterItems = []
 
 	snapshot.forEach(doc => {
 		const data = doc.data()
 		data.id = doc.id 
-		items.push(data)
+		hamsterItems.push(data)
 	})
 
-	const randomIndex = Math.floor(Math.random() * items.length)
-	res.status(200).send(items[randomIndex])
+	const randomIndex = Math.floor(Math.random() * hamsterItems.length)
+	res.status(200).send(hamsterItems[randomIndex])
 	} catch (err) {
 		screen.status(500).send(err.message)
 	}	
 })
 
 // GET /hamsters/:id
-
 router.get('/:id', async (req,res) =>{
 
 	try {
@@ -85,14 +78,10 @@ router.get('/:id', async (req,res) =>{
 });
 
 
-
-
-
 //POST /hamsters
 router.post('/', async (req, res) => {
 	
 	try {
-	//express.json måste vara installerat
 	const object = req.body
 
 	if(!object.name || typeof object.age != 'number' || !object.favFood || !object.loves || !object.imgName || typeof object.wins != 'number' || typeof object.defeats != 'number' || typeof object.games != 'number') {
@@ -113,10 +102,11 @@ router.post('/', async (req, res) => {
 
 //PUT /hamsters/:id
 router.put('/:id', async (req, res) => {
+
+	try {
 	const id = req.params.id;
 	const object = req.body;
 	
-
 	if(!object || !id) {
 		res.sendStatus(400);
 		return;
@@ -125,23 +115,15 @@ router.put('/:id', async (req, res) => {
 	const docRef = db.collection('hamsters').doc(id);
 	let hamsterRef;
 
-	try {
+	
 		hamsterRef = await docRef.get();
-	}
-
-	catch(error) {
-		console.log(error.message);
-		res.status(500).send(error.message);
-		return;
-	}
-
+ 
 	if(!hamsterRef.exists) {
-		res.status(404).send('Whops! Hamster not found.');
+		res.status(404).send('Hamster not found.');
 		return;
 	}
 
-	try {
-		await docRef.set(object, { merge: true });
+	await docRef.set(object, { merge: true });
 
 		if(Object.keys(object).length === 0) {
 			res.sendStatus(400);
@@ -152,16 +134,16 @@ router.put('/:id', async (req, res) => {
 	}
 
 	catch(error) {
-		console.log(error.message);
 		res.status(500).send(error.message);
 	}
 
 });
 
+
  //DELETE /hamsters/:id
 router.delete('/:id', async (req, res) => {
-
-const id = req.params.id;
+	try {
+	const id = req.params.id;
 
 	if(!id) {
 		res.sendStatus(400);
@@ -169,23 +151,14 @@ const id = req.params.id;
 	}
 
 	let docRef;
-
-	try {
-		docRef = await db.collection('hamsters').doc(id).get();
-	}
-
-	catch(error) {
-		res.status(500).send(error.message);
-		return;
-	}
-
+	docRef = await db.collection('hamsters').doc(id).get();
+	
 	if(!docRef.exists) {
-		// res.status(404).send(Whops! Hamster not found.);
-		res.sendStatus(404);
+		
+		res.status(404).send(`Hamster with id: ${id} does not exist`)
 		return;
 	}
 
-	try {
 		await db.collection('hamsters').doc(id).delete()
 		res.sendStatus(200);
 	}
